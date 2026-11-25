@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مرصد وحاسبة الذهب الذكية | اعرف السعر الحقيقي قبل البيع والشراء</title>
+  <style>
+    :root {
+      /* ألوان دافئة ومريحة للعين */
+      --bg: #f6f4ef;
+      --card: #ffffff;
+      --soft-box: #fbf9f5;
+      --text: #1f2933;
+      --muted: #5f6c7b;
+      --gold: #9a7316;
+      --gold-soft: #f5edd6;
+      --border: #e5e0d5;
+      --up: #1b7a54;
+      --up-bg: #e7f5ee;
+      --down: #b83b3b;
+      --down-bg: #fbeaea;
+    }
+
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    /* شريط التنقل بين الصفحات الأساسية */
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(31, 41, 51, 0.03);
+    }
+
+    .nav-inner {
+      max-width: 900px;
+      margin: auto;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand {
+      font-weight: bold;
+      color: var(--gold);
+      font-size: 1.1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid transparent;
+      padding: 7px 14px;
+      border-radius: 9px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--soft-box);
+      color: var(--text);
+    }
+
+    .nav-btn.active {
+      background: var(--gold-soft);
+      color: var(--gold);
+      border-color: rgba(154, 115, 22, 0.25);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    /* الهيدر والعنوان الجذاب */
+    header {
+      text-align: center;
+      padding: 34px 20px;
+      background: var(--card);
+      border-bottom: 3px solid var(--gold);
+      border-radius: 18px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      border-bottom-width: 3px;
+      border-bottom-color: var(--gold);
+      box-shadow: 0 4px 16px rgba(31, 41, 51, 0.04);
+    }
+
+    header h1 {
+      color: var(--gold);
+      font-size: 1.9rem;
+      margin: 0 0 10px 0;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 650px;
+      margin: auto;
+    }
+
+    /* البطاقات */
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 22px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(31, 41, 51, 0.04);
+    }
+
+    .card h2 {
+      color: var(--text);
+      margin-top: 0;
+      font-size: 1.32rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    /* قسم مؤشر السوق اليوم */
+    .market-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .stat-box {
+      background: var(--soft-box);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .stat-box strong {
+      font-size: 1.55rem;
+      color: var(--gold);
+    }
+
+    .trend-badge {
+      display: inline-block;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-top: 8px;
+      font-size: 0.95rem;
+    }
+
+    .trend-up {
+      background: var(--up-bg);
+      color: var(--up);
+      border: 1px solid rgba(27, 122, 84, 0.25);
+    }
+
+    .trend-down {
+      background: var(--down-bg);
+      color: var(--down);
+      border: 1px solid rgba(184, 59, 59, 0.25);
+    }
+
+    /* القسم التعليمي */
+    .edu-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .edu-item {
+      background: var(--soft-box);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      border-right: 4px solid var(--gold);
+    }
+
+    .edu-item h3 {
+      margin: 0 0 8px 0;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+
+    .edu-item p {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    /* الحاسبة */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid #d2cbc0;
+      background: var(--soft-box);
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--gold);
+      background: #ffffff;
+    }
+
+    .result-box {
+      margin-top: 22px;
+      background: var(--gold-soft);
+      border: 1px solid rgba(154, 115, 22, 0.35);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .result-box .total {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--gold);
+      margin: 6px 0;
+    }
+
+    .details-row {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .update-panel {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .action-btn {
+      background: var(--gold);
+      color: #ffffff;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .action-btn:hover {
+      background: #7e5d10;
+    }
+
+    .info-list {
+      padding-right: 20px;
+      color: var(--muted);
+    }
+
+    .info-list li {
+      margin-bottom: 10px;
+    }
+
+    .info-list strong {
+      color: var(--text);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 24px 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- شريط التنقل بين الصفحات الأساسية -->
+  <nav>
+    <div class="nav-inner">
+      <div class="brand">✦ مرصد الذهب وحاسبته</div>
+      <div class="nav-links">
+        <button class="nav-btn active" onclick="showPage('home', this)">الرئيسية والحاسبة</button>
+        <button class="nav-btn" onclick="showPage('about', this)">من نحن</button>
+        <button class="nav-btn" onclick="showPage('important', this)">تنبيهات مهمة</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- ==================== الصفحة 1: الرئيسية والحاسبة ==================== -->
+    <section id="page-home" class="page-section active">
+      <header>
+        <h1>لا تشتري ولا تبيع قبل ما تحسبها صح!</h1>
+        <p>دليلك الهادئ والذكي لمعرفة اتجاه أسعار الذهب اليوم (نازل أم مرتفع)، وحساب قيمة الجرام والمصنعية بوضوح قبل دخول السوق.</p>
+      </header>
+
+      <!-- 1. قسم حالة السوق اليوم -->
+      <div class="card">
+        <h2>📊 مؤشر حركة الذهب اليوم</h2>
+        <div style="text-align: center;">
+          <div id="trendBadge" class="trend-badge trend-up">جاري تحليل السوق...</div>
+        </div>
+
+        <div class="market-grid">
+          <div class="stat-box">
+            <span>سعر جرام عيار 24 اليوم</span>
+            <strong id="price24Display">330.00</strong> <small>ريال</small>
+          </div>
+          <div class="stat-box">
+            <span>سعر جرام عيار 21 اليوم</span>
+            <strong id="price21Display">288.75</strong> <small>ريال</small>
+          </div>
+          <div class="stat-box">
+            <span>سعر جرام عيار 18 اليوم</span>
+            <strong id="price18Display">247.50</strong> <small>ريال</small>
+          </div>
+        </div>
+
+        <!-- لوحة تحديث السعر السريعة -->
+        <div class="update-panel">
+          <div style="flex: 1; min-width: 150px;">
+            <label>سعر عيار 24 اليوم (ريال):</label>
+            <input type="number" id="today24Input" value="330" step="0.1" />
+          </div>
+          <div style="flex: 1; min-width: 150px;">
+            <label>سعر إغلاق الأمس (للمقارنة):</label>
+            <input type="number" id="yesterday24Input" value="326" step="0.1" />
+          </div>
+          <button class="action-btn" onclick="updateMarket()">تحديث المؤشر</button>
+        </div>
+      </div>
+
+      <!-- 2. قسم تعليمي قبل الحساب -->
+      <div class="card">
+        <h2>💡 كيف تحسب سعر جرام الذهب مثل المحترفين؟</h2>
+        <p style="color: var(--muted); margin-top: 0;">كثيرون يقعون في خطأ الخلط بين السعر العالمي وسعر المحل. احفظ هذه القواعد الثلاث قبل أي عملية:</p>
+        <div class="edu-steps">
+          <div class="edu-item">
+            <h3>1. عند الشراء (ذهب جديد)</h3>
+            <p>السعر = (سعر الجرام الخام حسب العيار + قيمة المصنعية لكل جرام) × الوزن بالجرام + الضريبة.</p>
+          </div>
+          <div class="edu-item">
+            <h3>2. عند البيع (ذهب مستعمل)</h3>
+            <p>المحل يشتري منك <strong>الذهب الصافي فقط</strong> بدون مصنعية، وقد يخصم نسبة بسيطة لإعادة الصهر.</p>
+          </div>
+          <div class="edu-item">
+            <h3>3. الفرق بين العيارات</h3>
+            <p>عيار 24 هو الذهب النقي (99.9%)، وعيار 21 يمثل 87.5% منه، وعيار 18 يمثل 75% من قيمته.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. الحاسبة التفاعلية -->
+      <div class="card">
+        <h2>🧮 حاسبة الذهب قبل البيع والشراء</h2>
+        <div class="form-grid">
+          <div>
+            <label>نوع العملية</label>
+            <select id="operationType" onchange="toggleCraftsmanship()">
+              <option value="buy">شراء ذهب (جديد / سبائك)</option>
+              <option value="sell">بيع ذهب (مستعمل / كسر)</option>
+            </select>
+          </div>
+
+          <div>
+            <label>اختر العيار</label>
+            <select id="karatSelect" onchange="calculateGold()">
+              <option value="24">عيار 24 (نقي)</option>
+              <option value="22">عيار 22</option>
+              <option value="21" selected>عيار 21 (الأكثر شيوعاً)</option>
+              <option value="18">عيار 18</option>
+            </select>
+          </div>
+
+          <div>
+            <label>الوزن بالجرام (g)</label>
+            <input type="number" id="weightInput" value="10" min="0.1" step="0.1" oninput="calculateGold()" />
+          </div>
+
+          <div id="craftBox">
+            <label>المصنعية للجرام الواحد (ريال)</label>
+            <input type="number" id="craftInput" value="25" min="0" step="1" oninput="calculateGold()" />
+          </div>
+
+          <div>
+            <label>ضريبة القيمة المضافة</label>
+            <select id="vatSelect" onchange="calculateGold()">
+              <option value="0">بدون ضريبة (0%)</option>
+              <option value="0.15">ضريبة 15% على الإجمالي</option>
+              <option value="craft_only">ضريبة 15% على المصنعية فقط</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="result-box">
+          <div id="resultLabel" style="color: var(--muted);">التكلفة الإجمالية المتوقعة للشراء:</div>
+          <div class="total"><span id="totalPrice">0.00</span> ريال</div>
+          <div class="details-row">
+            <span>سعر الجرام الصافي: <strong id="pureGramPrice" style="color:var(--text)">0</strong> ريال</span>
+            <span>قيمة الذهب الخام: <strong id="rawTotal" style="color:var(--text)">0</strong> ريال</span>
+            <span id="extraDetail">إجمالي المصنعية: <strong id="craftTotal" style="color:var(--text)">0</strong> ريال</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== الصفحة 2: من نحن ==================== -->
+    <section id="page-about" class="page-section">
+      <div class="card">
+        <h2>✦ من نحن</h2>
+        <p style="color: var(--muted);">
+          نحن مبادرة تقنية تهدف إلى تبسيط حسابات أسعار الذهب وجعلها واضحة ومباشرة لكل شخص مقبل على الشراء أو البيع أو الادخار، بعيداً عن التعقيد أو الأرقام غير المفهومة.
+        </p>
+        <div class="edu-steps">
+          <div class="edu-item">
+            <h3>رسالتنا</h3>
+            <p>تمكين المتعامل في سوق الذهب من معرفة القيمة التقديرية الحقيقية للجرام والمصنعية قبل التفاوض مع البائع أو المشتري.</p>
+          </div>
+          <div class="edu-item">
+            <h3>الشفافية والوضوح</h3>
+            <p>الفصل الواضح بين سعر الذهب الخام، وقيمة المصنعية، وأثر الضريبة، حتى تكون الصورة كاملة أمامك.</p>
+          </div>
+          <div class="edu-item">
+            <h3>مشروع مفتوح ومجاني</h3>
+            <p>أداة خفيفة وسريعة تعمل مباشرة عبر المتصفح دون إعلانات مزعجة أو تعقيد.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== الصفحة 3: تنبيهات مهمة وإخلاء مسؤولية ==================== -->
+    <section id="page-important" class="page-section">
+      <div class="card">
+        <h2>⚠️ أشياء مهمة قبل البيع والشراء</h2>
+        <ul class="info-list">
+          <li><strong>الأسعار استرشادية:</strong> الأرقام المعروضة في المؤشر والحاسبة تقديرية لغرض الحساب السريع، والسعر النهائي يحدده السوق اللحظي وكل متجر حسب سياسته.</li>
+          <li><strong>الفاتورة النظامية:</strong> احرص دائماً عند الشراء على استلام فاتورة توضح الوزن، والعيار، وسعر الجرام، والمصنعية، والضريبة.</li>
+          <li><strong>الدمغة والعيار:</strong> تأكد من وجود دمغة العيار المعتمدة على القطعة قبل إتمام الشراء.</li>
+          <li><strong>الفرق بين السبائك والمشغولات:</strong> السبائك والعملات الذهبية عادةً تكون مصنعيتها أقل من المشغولات الفنية المعقدة، بينما عند البيع تُحسب قيمة الذهب الصافي بالأساس.</li>
+          <li><strong>ليس استشارة استثمارية:</strong> الأداة مساعدة للحساب والتوعية ولا تُعد توصية مالية أو استثمارية بالبيع أو الشراء في وقت محدد.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    مرصد وحاسبة الذهب الذكية • أداة توعوية وحسابية استرشادية
+  </footer>
+
+  <script>
+    function showPage(pageName, btnElement) {
+      document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById('page-' + pageName).classList.add('active');
+      if (btnElement) btnElement.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateMarket() {
+      const today24 = parseFloat(document.getElementById('today24Input').value) || 0;
+      const yesterday24 = parseFloat(document.getElementById('yesterday24Input').value) || 0;
+
+      const price21 = today24 * (21 / 24);
+      const price18 = today24 * (18 / 24);
+
+      document.getElementById('price24Display').innerText = today24.toFixed(2);
+      document.getElementById('price21Display').innerText = price21.toFixed(2);
+      document.getElementById('price18Display').innerText = price18.toFixed(2);
+
+      const diff = today24 - yesterday24;
+      const percent = yesterday24 > 0 ? ((diff / yesterday24) * 100).toFixed(2) : 0;
+      const badge = document.getElementById('trendBadge');
+
+      if (diff > 0) {
+        badge.className = 'trend-badge trend-up';
+        badge.innerText = `🔺 الذهب مرتفع اليوم بمقدار ${diff.toFixed(2)} ريال (+${percent}%) عن أمس`;
+      } else if (diff < 0) {
+        badge.className = 'trend-badge trend-down';
+        badge.innerText = `🔻 الذهب نازل اليوم بمقدار ${Math.abs(diff).toFixed(2)} ريال (${percent}%) عن أمس`;
+      } else {
+        badge.className = 'trend-badge';
+        badge.style.background = '#eef1f4';
+        badge.style.color = '#1f2933';
+        badge.innerText = '➖ سعر الذهب مستقر اليوم مقارنة بسعر أمس';
+      }
+
+      calculateGold();
+    }
+
+    function toggleCraftsmanship() {
+      const op = document.getElementById('operationType').value;
+      const craftBox = document.getElementById('craftBox');
+      craftBox.style.display = (op === 'sell') ? 'none' : 'block';
+      calculateGold();
+    }
+
+    function calculateGold() {
+      const today24 = parseFloat(document.getElementById('today24Input').value) || 0;
+      const op = document.getElementById('operationType').value;
+      const karat = parseInt(document.getElementById('karatSelect').value);
+      const weight = parseFloat(document.getElementById('weightInput').value) || 0;
+      const craftPerGram = parseFloat(document.getElementById('craftInput').value) || 0;
+      const vatType = document.getElementById('vatSelect').value;
+
+      const pureGram = today24 * (karat / 24);
+      const rawGoldValue = pureGram * weight;
+
+      let total = 0;
+      let craftTotal = 0;
+
+      if (op === 'buy') {
+        craftTotal = craftPerGram * weight;
+        let subTotal = rawGoldValue + craftTotal;
+
+        if (vatType === '0.15') {
+          total = subTotal * 1.15;
+        } else if (vatType === 'craft_only') {
+          total = subTotal + (craftTotal * 0.15);
+        } else {
+          total = subTotal;
+        }
+
+        document.getElementById('resultLabel').innerText = 'التكلفة الإجمالية المتوقعة للشراء:';
+        document.getElementById('extraDetail').innerHTML = `إجمالي المصنعية: <strong style="color:var(--text)">${craftTotal.toFixed(2)}</strong> ريال`;
+      } else {
+        total = rawGoldValue;
+        document.getElementById('resultLabel').innerText = 'المبلغ الصافي المتوقع استلامه عند البيع:';
+        document.getElementById('extraDetail').innerHTML = `ملاحظة: <strong style="color:var(--text)">بدون مصنعية (ذهب صافي)</strong>`;
+      }
+
+      document.getElementById('pureGramPrice').innerText = pureGram.toFixed(2);
+      document.getElementById('rawTotal').innerText = rawGoldValue.toFixed(2);
+      document.getElementById('totalPrice').innerText = total.toFixed(2);
+    }
+
+    updateMarket();
+  </script>
+</body>
+</html>
